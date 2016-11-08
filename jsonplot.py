@@ -8,22 +8,8 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 
 
-def pie(data):
-    """Draw a pie chart
-
-    Input format:
-        [
-            {
-                "col1": val,
-                "col2": val
-            },
-            ...
-        ]
-
-    Each value in col1 results in a piece of the cake. The size depends on the
-    value in col2.
-    """
-    items = list(data.items())
+def pie(items):
+    """Draw a pie chart"""
     labels = [str(i) for i in items[0][1]]
     _, sizes = items[-1]
 
@@ -31,28 +17,8 @@ def pie(data):
     plt.show()
 
 
-def lines(data):
-    """Draws lines
-
-    data format:
-    [
-        {
-            "col1": val,
-            "col2": val,
-            ...
-        },
-        {
-            "col1": val,
-            "col2": val,
-            ...
-        },
-        ...
-    ]
-
-    The first column will generate the X axis, then per other column a line on
-    the Y axis is drawn.
-    """
-    items = list(data.items())
+def lines(items):
+    """Draws lines"""
     x_label, x_items = items[0]
     plt.xlabel(x_label)
     plt.xticks(range(len(x_items)), x_items, rotation=45)
@@ -62,20 +28,8 @@ def lines(data):
     plt.show()
 
 
-def bar(data):
-    """Draw a bar chart
-
-    Input format:
-        [
-            {
-                "col1": val,
-                "col2". val
-            }
-        }
-
-    Values in col1 map to the X axis, values in col2 to the Y axis.
-    """
-    items = list(data.items())
+def bar(items):
+    """Draw a bar chart"""
     x_label, x_items = items[0]
     y_label, y_values = items[1]
     plt.xlabel(x_label)
@@ -98,7 +52,24 @@ def _list_to_dict(items):
 @argh.arg('--mode', choices=['lines', 'bar', 'pie'])
 @argh.arg('--verbose', action='count')
 def plot(mode='lines', *, title=None, verbose=None):
-    """Plot JSON received on stdin into a chart"""
+    """Plot JSON received on stdin into a chart
+
+    Input format:
+        [
+            {
+                "col1": val,
+                "col2": val
+            },
+            ...
+        ]
+
+    Values of col1 will usually map to the X axis. The other columns will
+    map to the Y axis.
+
+    The exact behaviour depends on the mode.
+    For example in the pie chart the values of the first column make up the
+    labels and the second column determines the size of the pieces.
+    """
 
     if verbose:
         import matplotlib
@@ -112,8 +83,11 @@ def plot(mode='lines', *, title=None, verbose=None):
         plt.title(title)
 
     g = globals()
+    items = list(data.items())
+    if len(items) < 1:
+        raise SystemExit('JSON input needs to have at least two columns')
     if mode in g:
-        return g[mode](data)
+        return g[mode](items)
     raise SystemExit('Unsupported mode: ' + mode)
 
 
