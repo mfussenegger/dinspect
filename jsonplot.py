@@ -37,8 +37,8 @@ def pie(items):
     plt.show()
 
 
-def hist(items):
-    plt.hist(items)
+def hist(items, num_bins=50):
+    plt.hist(items, num_bins)
     plt.show()
 
 
