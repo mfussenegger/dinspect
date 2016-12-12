@@ -8,38 +8,16 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 
 
-def pie(items):
-    """Draw a pie chart"""
-    labels = [str(i) for i in items[0][1]]
-    _, sizes = items[-1]
-
-    plt.pie(sizes, labels=labels, autopct='%1.1f%%')
-    plt.show()
-
-
-def lines(items):
-    """Draws lines"""
-    x_label, x_items = items[0]
-    plt.xlabel(x_label)
-    plt.xticks(range(len(x_items)), x_items, rotation=45)
-    for y_label, y_values in items[1:]:
-        plt.plot(y_values, label=y_label)
-    plt.legend()
-    plt.show()
-
-
-def bar(items):
-    """Draw a bar chart"""
-    x_label, x_items = items[0]
-    y_label, y_values = items[1]
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
-    plt.bar(range(len(y_values)), y_values)
-    plt.xticks(range(len(x_items)), x_items, rotation=45)
-    plt.show()
-
-
 def _list_to_dict(items):
+    """ Convert a list of dicts to a dict with the keys & values aggregated
+
+    >>> _list_to_dict([
+    ...     OrderedDict([('x', 1), ('y', 10)]),
+    ...     OrderedDict([('x', 2), ('y', 20)]),
+    ...     OrderedDict([('x', 3), ('y', 30)]),
+    ... ])
+    OrderedDict([('x', [1, 2, 3]), ('y', [10, 20, 30])])
+    """
     d = OrderedDict()
     for item in items:
         for k, v in item.items():
@@ -49,12 +27,69 @@ def _list_to_dict(items):
     return d
 
 
-@argh.arg('--mode', choices=['lines', 'bar', 'pie'])
+def pie(items):
+    """Draw a pie chart"""
+    items = list(_list_to_dict(items).items())
+    labels = [str(i) for i in items[0][1]]
+    _, sizes = items[-1]
+
+    plt.pie(sizes, labels=labels, autopct='%1.1f%%')
+    plt.show()
+
+
+def hist(items):
+    plt.hist(items)
+    plt.show()
+
+
+def lines(items):
+    """Draws lines"""
+    first_item = items[0]
+    if isinstance(first_item, dict):
+        items = list(_list_to_dict(items).items())
+        x_label, x_items = items[0]
+        plt.xlabel(x_label)
+        plt.xticks(range(len(x_items)), x_items, rotation=45)
+        for y_label, y_values in items[1:]:
+            plt.plot(y_values, label=y_label)
+        plt.legend()
+    else:
+        plt.xlabel('samples')
+        plt.plot(items)
+    plt.show()
+
+
+def bar(items):
+    """Draw a bar chart"""
+    items = list(_list_to_dict(items).items())
+    x_label, x_items = items[0]
+    y_label, y_values = items[1]
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.bar(range(len(y_values)), y_values)
+    plt.xticks(range(len(x_items)), x_items, rotation=45)
+    plt.show()
+
+
+@argh.arg('--mode', choices=['lines', 'bar', 'pie', 'hist'])
 @argh.arg('--verbose', action='count')
 def plot(mode='lines', *, title=None, verbose=None):
     """Plot JSON received on stdin into a chart
 
-    Input format:
+    Inputs:
+
+        List of values:
+
+        [
+            10,
+            20,
+            30,
+            ...
+        ]
+
+
+    List of map with >= 2 keys
+
         [
             {
                 "col1": val,
@@ -76,18 +111,14 @@ def plot(mode='lines', *, title=None, verbose=None):
         print(matplotlib.matplotlib_fname())
 
     data = json.load(sys.stdin, object_pairs_hook=OrderedDict)
-    if isinstance(data, list):
-        data = _list_to_dict(data)
-
+    if not data:
+        raise SystemExit('Empty input')
     if title:
         plt.title(title)
 
     g = globals()
-    items = list(data.items())
-    if len(items) < 1:
-        raise SystemExit('JSON input needs to have at least two columns')
     if mode in g:
-        return g[mode](items)
+        return g[mode](data)
     raise SystemExit('Unsupported mode: ' + mode)
 
 
