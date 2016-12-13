@@ -5,6 +5,7 @@ import sys
 import argh
 import json
 import matplotlib.pyplot as plt
+import statistics
 from collections import OrderedDict
 
 
@@ -38,7 +39,12 @@ def pie(items):
 
 
 def hist(items, num_bins=50):
-    plt.hist(items, num_bins)
+    plt.hist(items, num_bins, alpha=0.75)
+    mean = statistics.mean(items)
+    median = statistics.median(items)
+    plt.axvline(mean, color='r', linewidth=2, linestyle='dashed', label='mean')
+    plt.axvline(median, color='g', linewidth=2, linestyle='dashed', label='median')
+    plt.legend()
     plt.show()
 
 
