@@ -10,6 +10,7 @@ setup(
         'argh',
         'matplotlib'
     ],
+    py_modules=['jsonplot'],
     entry_points={
         'console_scripts': [
             'jsonplot = jsonplot:main',
