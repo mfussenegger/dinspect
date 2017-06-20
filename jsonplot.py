@@ -65,6 +65,20 @@ def lines(items):
     plt.show()
 
 
+def scatter(items):
+    fst = items[0]
+    if isinstance(fst, dict):
+        items = list(_list_to_dict(items).items())
+        x_label, x_items = items[0]
+        plt.xlabel(x_label)
+        plt.xticks(range(len(x_items)), x_items, rotation=45)
+        plt.scatter(x_items, items[1][1])
+    else:
+        x_items = list(range(len(items)))
+        plt.scatter(x_items, items)
+    plt.show()
+
+
 def bar(items):
     """Draw a bar chart"""
     items = list(_list_to_dict(items).items())
@@ -77,7 +91,7 @@ def bar(items):
     plt.show()
 
 
-@argh.arg('--mode', choices=['lines', 'bar', 'pie', 'hist'])
+@argh.arg('--mode', choices=['lines', 'bar', 'pie', 'hist', 'scatter'])
 @argh.arg('--verbose', action='count')
 def plot(mode='lines', *, title=None, verbose=None):
     """Plot JSON received on stdin into a chart
