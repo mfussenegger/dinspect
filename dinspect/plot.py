@@ -2,7 +2,9 @@ import sys
 import json
 import matplotlib.pyplot as plt
 import statistics
+import numpy as np
 from collections import OrderedDict
+from dinspect.changepoints import _cusum
 
 
 def _list_to_dict(items):
@@ -42,6 +44,11 @@ def hist(items, num_bins=50):
     plt.axvline(median, color='g', linewidth=2, linestyle='dashed', label='median')
     plt.legend()
     plt.show()
+
+
+def cusum(items):
+    sums = _cusum(np.array(items))
+    lines(sums)
 
 
 def lines(items):
@@ -93,6 +100,7 @@ modes = {
     'lines': lines,
     'pie': pie,
     'scatter': scatter,
+    'cusum': cusum
 }
 
 

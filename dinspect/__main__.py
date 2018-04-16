@@ -22,7 +22,7 @@ def add_plot(subparsers):
     plot_parser.set_defaults(func=plot.plot)
     plot_parser.add_argument(
         '--mode',
-        choices=('lines', 'bar', 'pie', 'hist', 'scatter'),
+        choices=plot.modes.keys(),
     )
     plot_parser.add_argument('--verbose', action='count')
     plot_parser.add_argument('--title', type=str)
