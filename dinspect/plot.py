@@ -2,6 +2,7 @@ import sys
 import json
 import matplotlib.pyplot as plt
 import statistics
+import numpy as np
 from collections import OrderedDict
 
 
@@ -87,12 +88,32 @@ def bar(items):
     plt.show()
 
 
+def lineregress(items):
+    fst = items[0]
+    if isinstance(fst, dict):
+        items = list(_list_to_dict(items).items())
+        x_label, x_items = items[0]
+        y_label, y_items = items[1]
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        fit = np.polyfit(x_items, y_items, 1)
+        fit_fn = np.poly1d(fit)
+        plt.plot(x_items, y_items, fit_fn(x_items))
+    else:
+        x_items = list(range(len(items)))
+        fit = np.polyfit(x_items, items, 1)
+        fit_fn = np.poly1d(fit)
+        plt.plot(x_items, items, fit_fn(x_items))
+    plt.show()
+
+
 modes = {
     'bar': bar,
     'hist': hist,
     'lines': lines,
     'pie': pie,
     'scatter': scatter,
+    'lineregress': lineregress,
 }
 
 
