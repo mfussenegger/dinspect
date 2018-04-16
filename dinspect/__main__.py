@@ -1,6 +1,13 @@
 import sys
 from argparse import ArgumentParser, FileType
-from dinspect import plot, outliers
+from dinspect import plot, outliers, changepoints
+
+
+def add_changepoints(subparsers):
+    p = subparsers.add_parser('changepoints')
+    p.set_defaults(func=changepoints.find_changepoints)
+    p.add_argument(
+        '--input', dest='lines', type=FileType('r'), default=sys.stdin)
 
 
 def add_outliers(subparsers):
@@ -26,6 +33,7 @@ def main():
     subparsers = parser.add_subparsers()
     add_plot(subparsers)
     add_outliers(subparsers)
+    add_changepoints(subparsers)
 
     parsed_args = parser.parse_args()
     args = {k: v for k, v in vars(parsed_args).items() if v and k != 'func'}
