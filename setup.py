@@ -1,19 +1,18 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 from setuptools import setup
 
 
 setup(
-    name='jsonplot',
+    name='dinspect',
     install_requires=[
-        'argh',
         'matplotlib'
     ],
-    py_modules=['jsonplot'],
+    packages=['dinspect'],
+    python_requires='>=3.6',
     entry_points={
         'console_scripts': [
-            'jsonplot = jsonplot:main',
+            'dinspect = dinspect.__main__:main',
         ]
     }
 )

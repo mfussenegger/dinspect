@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import sys
-import argh
 import json
 import matplotlib.pyplot as plt
 import statistics
@@ -91,8 +87,15 @@ def bar(items):
     plt.show()
 
 
-@argh.arg('--mode', choices=['lines', 'bar', 'pie', 'hist', 'scatter'])
-@argh.arg('--verbose', action='count')
+modes = {
+    'bar': bar,
+    'hist': hist,
+    'lines': lines,
+    'pie': pie,
+    'scatter': scatter,
+}
+
+
 def plot(mode='lines', *, title=None, verbose=None):
     """Plot JSON received on stdin into a chart
 
@@ -136,17 +139,6 @@ def plot(mode='lines', *, title=None, verbose=None):
     if title:
         plt.title(title)
 
-    g = globals()
-    if mode in g:
-        return g[mode](data)
+    if mode in modes:
+        return modes[mode](data)
     raise SystemExit('Unsupported mode: ' + mode)
-
-
-def main():
-    p = argh.ArghParser()
-    p.set_default_command(plot)
-    p.dispatch()
-
-
-if __name__ == "__main__":
-    main()
