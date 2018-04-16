@@ -6,7 +6,8 @@ from setuptools import setup
 setup(
     name='dinspect',
     install_requires=[
-        'matplotlib'
+        'matplotlib',
+        'numpy'
     ],
     packages=['dinspect'],
     python_requires='>=3.6',

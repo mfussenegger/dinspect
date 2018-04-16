@@ -1,10 +1,16 @@
-from argparse import ArgumentParser
-from dinspect import plot
+import sys
+from argparse import ArgumentParser, FileType
+from dinspect import plot, outliers
 
 
-def main():
-    parser = ArgumentParser()
-    subparsers = parser.add_subparsers()
+def add_outliers(subparsers):
+    reject = subparsers.add_parser('outliers-reject')
+    reject.set_defaults(func=outliers.reject)
+    reject.add_argument(
+        '--input', dest='input_', type=FileType('r'), default=sys.stdin)
+
+
+def add_plot(subparsers):
     plot_parser = subparsers.add_parser('plot')
     plot_parser.set_defaults(func=plot.plot)
     plot_parser.add_argument(
@@ -13,6 +19,13 @@ def main():
     )
     plot_parser.add_argument('--verbose', action='count')
     plot_parser.add_argument('--title', type=str)
+
+
+def main():
+    parser = ArgumentParser()
+    subparsers = parser.add_subparsers()
+    add_plot(subparsers)
+    add_outliers(subparsers)
 
     parsed_args = parser.parse_args()
     args = {k: v for k, v in vars(parsed_args).items() if v and k != 'func'}
