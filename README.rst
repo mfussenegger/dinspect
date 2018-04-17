@@ -1,8 +1,10 @@
 ========
-jsonplot
+dinspect
 ========
 
-Utility to turn JSON into a chart using matplotlib:
+CLI tool for data inspection.
+
+Can be used to plot JSON or run various analysis on some JSON input.
 
 
 .. image:: images/jsonplot.png
