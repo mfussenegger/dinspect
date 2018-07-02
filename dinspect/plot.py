@@ -36,7 +36,13 @@ def pie(items):
 
 
 def hist(items, num_bins=50):
-    plt.hist(items, num_bins, alpha=0.75)
+    first_item = items[0]
+    if isinstance(first_item, dict):
+        raise TypeError((
+            "Need list of values as input to hist. "
+            "not list of dictionaries " + str(first_item)))
+    else:
+        plt.hist(items, num_bins, alpha=0.75)
     mean = statistics.mean(items)
     median = statistics.median(items)
     plt.axvline(mean, color='r', linewidth=2, linestyle='dashed', label='mean')
