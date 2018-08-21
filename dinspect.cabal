@@ -17,3 +17,6 @@ executable dinspect
                      , aeson
                      , Chart
                      , Chart-cairo
+                     , temporary
+                     , process
+                     , directory
