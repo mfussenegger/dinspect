@@ -1,0 +1,9 @@
+---
+resolver: lts-12.7
+
+packages:
+  - .
+
+extra-deps:
+  - Chart-1.9
+  - Chart-cairo-1.9
