@@ -11,8 +11,15 @@ executable dinspect
   hs-source-dirs:      src
   main-is:             Main.hs
   default-language:    Haskell2010
+  other-modules:
+    CliArgs
+    Plot
   build-depends:       base >= 4.7 && < 5
                      , text
+                     , bytestring
+                     , vector
+                     , unordered-containers
+                     , scientific
                      , optparse-applicative
                      , aeson
                      , Chart
@@ -20,3 +27,12 @@ executable dinspect
                      , temporary
                      , process
                      , directory
+
+test-suite test
+  default-language: Haskell2010
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   test
+  main-is:          doctests.hs
+  ghc-options:      -threaded
+  build-depends:    base >= 4.7 && < 5
+                  , doctest
