@@ -117,6 +117,24 @@ modes = {
 }
 
 
+def parse_input(lines):
+    lines = iter(lines)
+    for line in lines:
+        try:
+            data = json.loads(line, object_pairs_hook=OrderedDict)
+            if isinstance(data, list):
+                yield from data
+            else:
+                yield data
+        except ValueError:
+            content = line + ''.join(lines)
+            dicts = json.loads(content, object_pairs_hook=OrderedDict)
+            if isinstance(dicts, list):
+                yield from dicts
+            else:
+                yield dicts
+
+
 def plot(mode='lines', *, title=None, verbose=None):
     """Plot JSON received on stdin into a chart
 
@@ -124,26 +142,29 @@ def plot(mode='lines', *, title=None, verbose=None):
 
         List of values:
 
-        [
-            10,
-            20,
-            30,
-            ...
-        ]
+            [ 10, 20, 30, ... ]
 
 
-    List of map with >= 2 keys
+        List of map with >= 2 keys
 
-        [
-            {
-                "col1": val,
-                "col2": val
-            },
-            ...
-        ]
+            [
+                { "col1": val, "col2": val },
+                ...
+            ]
 
-    Values of col1 will usually map to the X axis. The other columns will
-    map to the Y axis.
+        JSON object per line:
+
+            { "col1": val, "col2": val }
+            { "col1": val, "col2": val }
+
+        Single value per line:
+
+            10
+            20
+            30
+
+    Values of the first column will usually map to the X axis. The other columns
+    will map to the Y axis.
 
     The exact behaviour depends on the mode.
     For example in the pie chart the values of the first column make up the
@@ -154,7 +175,9 @@ def plot(mode='lines', *, title=None, verbose=None):
         import matplotlib
         print(matplotlib.matplotlib_fname())
 
-    data = json.load(sys.stdin, object_pairs_hook=OrderedDict)
+    if sys.stdin.isatty():
+        raise SystemExit('Expected JSON input via stdin')
+    data = list(parse_input(sys.stdin))
     if not data:
         raise SystemExit('Empty input')
     if title:
