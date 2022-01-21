@@ -107,6 +107,19 @@ def lineregress(items):
     plt.show()
 
 
+def boxplot(inputs):
+    fst = inputs[0]
+    if isinstance(fst, dict):
+        items = list(_list_to_dict(inputs).items())
+        x_label, labels = items[0]
+        plt.xlabel(x_label)
+        data = items[1][1]
+        plt.boxplot(data, labels=labels)
+    else:
+        plt.boxplot(inputs)
+    plt.show()
+
+
 modes = {
     'bar': bar,
     'hist': hist,
@@ -114,6 +127,7 @@ modes = {
     'pie': pie,
     'scatter': scatter,
     'lineregress': lineregress,
+    'boxplot': boxplot,
 }
 
 
